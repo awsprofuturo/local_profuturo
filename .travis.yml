@@ -3,24 +3,24 @@ language: php
 sudo: false
 
 addons:
-  firefox: "47.0.1"
-  postgresql: "9.3"
-  apt:
-    packages:
-      - openjdk-8-jre-headless
+  firefox: latest
+  postgresql: "9.4"
 
 cache:
   directories:
     - $HOME/.composer/cache
     - $HOME/.npm
 
-php:
-  - 7.3
-
 env:
-  - MOODLE_BRANCH=master           DB=pgsql
-  - MOODLE_BRANCH=master           DB=mysqli
-  - MOODLE_BRANCH=MOODLE_38_STABLE DB=pgsql
+  global:
+    - DB=pgsql
+    - IGNORE_PATHS=vendor/
+    - MOZ_HEADLESS=1
+
+matrix:
+  include:
+    - env: MOODLE_BRANCH=MOODLE_38_STABLE
+      php: 7.3
 
 before_install:
   - phpenv config-rm xdebug.ini
@@ -40,6 +40,6 @@ script:
   - moodle-plugin-ci codechecker
   - moodle-plugin-ci validate
   - moodle-plugin-ci savepoints
-  - moodle-plugin-ci mustache
   - moodle-plugin-ci grunt
   - moodle-plugin-ci phpunit
+  - moodle-plugin-ci behat
